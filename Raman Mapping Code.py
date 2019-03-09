@@ -22,8 +22,9 @@ get_ipython().run_line_magic('matplotlib', 'qt')
 
 
 ##   Import ASCII data file (full path of the of ASCII file)
-data = np.genfromtxt(r'C:\Users\Anand Kumar\Desktop\MoS2_RAMAN DATA.txt')
-#data = np.genfromtxt(r'C:\Users\Anand Kumar\Dropbox\Anand Kumar\Experimental Data\2018\August\Raman Mapping Data_Sujit____MoS2\s1.txt')
+
+data = np.genfromtxt(r'Path of th File')
+
 m=np.shape(data)
 print(data)
 print(m)
@@ -70,15 +71,16 @@ plt.show()
 
 # In[19]:
 
+### Fitting of the peak using Gaussian and Lorentzian Function
 
 def gaussian(x,mean,amp,sigma):
-    f=np.exp((-(x-mean)**2)/(2*sigma**2))*amp
+    
+    #    Gaussian Function 
+    f=np.exp((-(x-mean)**2)/(2*sigma**2))*amp   
+    
+    #Lorentzian Function
     #f= (sigma**2 / ((x-mean)**2 + sigma**2) ) *amp
     return f
-#def poly(xp,a,b,c):
-#    fp=a+b*xp+c*xp**3
-#    return fp
-
 
 # In[20]:
 
@@ -112,14 +114,16 @@ for i in range(1,m[0]):     #m[0]
     initial_guess = [385,100,2,405,100,5]
     result = optimize.minimize(cost, initial_guess)#, bounds='bnds',tol=1e-15)
     
+    # Fitted Peak Position 
     v1.append(result.x[0])
     v2.append(result.x[3])
     
+    # Fitting Parameters 
     
-    #print('steps', result.nit, result.fun)
-    #print(f'g_0: mean: {result.x[0]:3.3f} amplitude: {result.x[1]:3.3f} sigma: {result.x[2]:3.3f}')
-    #print(f'g_1: mean: {result.x[3]:3.3f} amplitude: {result.x[4]:3.3f} sigma: {result.x[5]:3.3f}') # offset: {result.x[6]:3.3f}')
-    #print(f'p_0: a: {result.x[6]:3.3f} b: {result.x[7]:3.3f} c: {result.x[8]:3.3f}')# d: {result.x[9]:3.3f}')
+    print('steps', result.nit, result.fun)
+    print(f'g_0: mean: {result.x[0]:3.3f} amplitude: {result.x[1]:3.3f} sigma: {result.x[2]:3.3f}')
+    print(f'g_1: mean: {result.x[3]:3.3f} amplitude: {result.x[4]:3.3f} sigma: {result.x[5]:3.3f}') # offset: {result.x[6]:3.3f}')
+    print(f'p_0: a: {result.x[6]:3.3f} b: {result.x[7]:3.3f} c: {result.x[8]:3.3f}')# d: {result.x[9]:3.3f}')
     
     
     fitted_data = gaussian(data[0,temp1:temp2],*result.x[:3])+gaussian(data[0,temp1:temp2],*result.x[3:6])
@@ -137,23 +141,9 @@ for i in range(1,m[0]):     #m[0]
         #plt.plot(data[0,temp1:temp2],corr_data)
         #print(peak_area)
                   
-    plt.plot( data[0,temp1:temp2], fitted_data)
-    plt.plot(data[0,temp1:temp2],corr_data,'.')
-    #plt.plot(data[0,temp1:temp2],data[i,temp1:temp2]-base,'.')
-    
-    #plt.plot(data[0,temp1:temp2],fitted_data)
-    
-    
-   
-        
-    #base = []
-    
-    
-    #plt.savefig('s1_image.png')
-#for i in range(0,m[0]):
-#    print(delta_v[i])
-#print(f'p_0: a: {result.x[6]:3.3f} b: {result.x[7]:3.3f} c: {result.x[8]:3.3f}')# d: {result.x[9]:3.3f}')
-#plt.legend()
+    plt.plot( data[0,temp1:temp2], fitted_data, label = 'Fitted Curve')
+    plt.plot(data[0,temp1:temp2],corr_data,'.', 'Actual Data point')
+plt.legend()
 plt.show()
 
 
@@ -165,40 +155,10 @@ d = np.reshape(delta_v,(25,23))
 #d = np.reshape(delta_v,(6,6))
 
 #print(d)
-#e=json.dumps(d.tolist())
+
 x = np.linspace(-5,5,23)
 y = np.linspace(-5,5,25)
 X,Y = np.meshgrid(x,y)
 plt.contourf(X,Y,d, 500,cmap=cm.hot,)
 plt.colorbar(label='Separation of $E{^1}_2g$ and $A_{1g}$')
 plt.show()
-
-
-# In[20]:
-
-
-#fig, ax = plt.subplots()
-x = np.linspace(20,-12,23)
-y = np.linspace(20,-12,25)
-X,Y = np.meshgrid(x,y)
-ax = plt.axes(projection='3d')
-ax.contour3D(X, Y, d,500, cmap = cm.coolwarm )
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('d')
-
-
-# In[21]:
-
-
-#print(a)
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-x = np.linspace(20,-12,23)
-y = np.linspace(20,-12,25)
-X,Y = np.meshgrid(x,y)
-ax.contour3D(X, Y, d, 500, cmap='binary')
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('z');
-
